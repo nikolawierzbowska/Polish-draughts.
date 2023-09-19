@@ -9,11 +9,13 @@ public class Board {
     int n;
     public Pawn[][] board;
 
+    public Pawn[][] getBoard() {
+        return board;
+    }
 
     Board() {
         int n = askSize();
         board = setPawns(new Pawn[n][n], n);
-        printBoard(board);
     }
 
     public int askSize() {
@@ -45,7 +47,6 @@ public class Board {
                 k++;
             }
         }
-//        System.out.println();
         return alphabet;
     }
 
@@ -98,44 +99,52 @@ public class Board {
     }
 
 
-
     public void printBoard(Pawn[][] board) {
         n = board.length;
-
+        StringBuilder strBuilderBoard = new StringBuilder();
+        strBuilderBoard.append(printLetters(n));
         for (int i = 0; i < n; i++) {
-            for (int z = 0; z < n; z++) {
-                System.out.print("-----");
+            for (int z = 0; z < n-1; z++) {
 
 
+                if(n>=14){
+                    strBuilderBoard.append("---");
+                }else{
+                    strBuilderBoard.append("-----");
+                }
             }
-            System.out.println();
+            strBuilderBoard.append("\n");
             if (i<9) {
-                System.out.print(" "+"0" + (i + 1) +" "+ "|");
+                strBuilderBoard.append(" "+"0" + (i + 1) +" "+ "|");
             }else {
-                System.out.print(" "+(i + 1) +" "+ "|");
+                strBuilderBoard.append(" "+(i + 1) +" "+ "|");
             }
-
             for (int j = 0; j < n; j++) {
                 if ((i + j) % 2 == 0) {
-                    System.out.print(" " + "-" + " " + "|");
+                    strBuilderBoard.append(" " + "-" + " " + "|");
                 } else if (board[i][j] == null) {
-                    System.out.print(" " + "\u0020"  + " |");
+                    strBuilderBoard.append(" " + "\u0020"  + " |");
                 } else {
-                    System.out.print(" " + board[i][j].getColor().symbol + " " + "|");
+                    strBuilderBoard.append(" " + board[i][j].getColor().symbol + " " + "|");
                 }
 
             }
             if (i<9) {
-                System.out.print(" "+"0" + (i + 1) +" ");
+
+                strBuilderBoard.append(" "+"0" + (i + 1) +" ");
             }else {
-                System.out.print(" "+(i + 1) + " ");
+                strBuilderBoard.append(" "+(i + 1) + " ");
             }
-            System.out.println();
+
+
+            strBuilderBoard.append("\n");
         }
         for (int z = 0; z < n; z++) {
-            System.out.print("-----");
+            strBuilderBoard.append("-----");
         }
-        System.out.println();
+        strBuilderBoard.append("\n");
+        strBuilderBoard.append(printLetters(n));
+        System.out.println(strBuilderBoard.toString());
     }
 
     private String printLetters(int n) {
@@ -152,19 +161,8 @@ public class Board {
 
 
 
-    @Override
-    public String toString() {
-       String letters = printLetters(n);
-        return letters;
-    }
 
 
-
-
-//    @Override
-//    public String toString() {
-//        return "Board{}";
-//    }
 }
 
 
