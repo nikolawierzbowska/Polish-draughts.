@@ -104,15 +104,10 @@ public class Board {
         StringBuilder strBuilderBoard = new StringBuilder();
         strBuilderBoard.append(printLetters(n));
         for (int i = 0; i < n; i++) {
-            for (int z = 0; z < n-1; z++) {
-
-
-                if(n>=14){
-                    strBuilderBoard.append("---");
-                }else{
-                    strBuilderBoard.append("-----");
+            strBuilderBoard.append("    ");
+            for (int z = 0; z < n; z++) {
+                    strBuilderBoard.append("----");
                 }
-            }
             strBuilderBoard.append("\n");
             if (i<9) {
                 strBuilderBoard.append(" "+"0" + (i + 1) +" "+ "|");
@@ -139,8 +134,9 @@ public class Board {
 
             strBuilderBoard.append("\n");
         }
+        strBuilderBoard.append("    ");
         for (int z = 0; z < n; z++) {
-            strBuilderBoard.append("-----");
+            strBuilderBoard.append("----");
         }
         strBuilderBoard.append("\n");
         strBuilderBoard.append(printLetters(n));
