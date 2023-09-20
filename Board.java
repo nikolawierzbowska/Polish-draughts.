@@ -6,7 +6,7 @@ import java.lang.System;
 
 public class Board {
     private final String messageOfSize = "Give the number of board size from 10 to 20: ";
-    int n;
+    private int n;
     public Pawn[][] board;
 
     public Pawn[][] getBoard() {
@@ -16,6 +16,7 @@ public class Board {
     Board() {
         int n = askSize();
         board = setPawns(new Pawn[n][n], n);
+
     }
 
     public int askSize() {
@@ -25,10 +26,10 @@ public class Board {
             if (scanner.hasNextInt()) {
                 n = scanner.nextInt();
                 if (n < 10 || n > 20) {
-                    System.out.println("Number is wrong. Try again");
+                    System.out.println("Number is wrong. Try again!");
                 }
             } else {
-                System.out.println("Number is wrong. Try again");
+                System.out.println("Number is wrong. Try again!");
             }
         } while (n < 10 || n > 20);
         System.out.println("Board size: " + n);
@@ -50,21 +51,21 @@ public class Board {
         return alphabet;
     }
 
-    public Pawn[][] whitePawns(Pawn[][] board, int n) {
-        int whitePawnsSum = 2 * n;
+    public Pawn[][] blackPawns(Pawn[][] board, int n) {
+        int blackPawnsSum = 2 * n;
         for (int i = 0; i < n; i++) {
             if ((i + 1) % 2 == 0) {
                 for (int j = 0; j < n; j += 2) {
-                    if (whitePawnsSum > 0) {
-                        board[i][j] = new Pawn(Color.WHITE, i, j);
-                        whitePawnsSum--;
+                    if (blackPawnsSum > 0) {
+                        board[i][j] = new Pawn(Color.BLACK, i, j);
+                        blackPawnsSum--;
                     }
                 }
             } else {
                 for (int j = 1; j < n; j += 2) {
-                    if (whitePawnsSum > 0) {
-                        board[i][j] = new Pawn(Color.WHITE, i, j);
-                        whitePawnsSum--;
+                    if (blackPawnsSum > 0) {
+                        board[i][j] = new Pawn(Color.BLACK, i, j);
+                        blackPawnsSum--;
                     }
                 }
             }
@@ -72,21 +73,21 @@ public class Board {
         return board;
     }
 
-    public Pawn[][] blackPawns(Pawn[][] board, int n) {
-        int blackPawnsSum = 2 * n;
+    public Pawn[][] whitePawns(Pawn[][] board, int n) {
+        int whitePawnsSum = 2 * n;
         for (int i = n - 1; i >= 0; i--) {
             if ((i - 1) % 2 == 0) {
                 for (int j = 0; j < n; j += 2) {
-                    if (blackPawnsSum > 0) {
-                        board[i][j] = new Pawn(Color.BLACK, i, j);
-                        blackPawnsSum--;
+                    if (whitePawnsSum > 0) {
+                        board[i][j] = new Pawn(Color.WHITE, i, j);
+                        whitePawnsSum--;
                     }
                 }
             } else {
                 for (int j = 1; j < n; j += 2) {
-                    if (blackPawnsSum > 0) {
-                        board[i][j] = new Pawn(Color.BLACK, i, j);
-                        blackPawnsSum--;
+                    if (whitePawnsSum > 0) {
+                        board[i][j] = new Pawn(Color.WHITE  , i, j);
+                        whitePawnsSum--;
                     }
                 }
             }
@@ -104,7 +105,7 @@ public class Board {
         StringBuilder strBuilderBoard = new StringBuilder();
         strBuilderBoard.append(printLetters(n));
         for (int i = 0; i < n; i++) {
-            strBuilderBoard.append("    ");
+            strBuilderBoard.append("     ");
             for (int z = 0; z < n; z++) {
                     strBuilderBoard.append("----");
                 }
@@ -122,16 +123,12 @@ public class Board {
                 } else {
                     strBuilderBoard.append(" " + board[i][j].getColor().symbol + " " + "|");
                 }
-
             }
             if (i<9) {
-
                 strBuilderBoard.append(" "+"0" + (i + 1) +" ");
             }else {
                 strBuilderBoard.append(" "+(i + 1) + " ");
             }
-
-
             strBuilderBoard.append("\n");
         }
         strBuilderBoard.append("    ");
@@ -140,7 +137,7 @@ public class Board {
         }
         strBuilderBoard.append("\n");
         strBuilderBoard.append(printLetters(n));
-        System.out.println(strBuilderBoard.toString());
+        System.out.println(strBuilderBoard);
     }
 
     private String printLetters(int n) {
@@ -154,9 +151,31 @@ public class Board {
     }
 
 
+    public void removePawn(Pawn[][] board, int x, int y){
+        board[x][y] = null;
+
+    }
+
+
+    public void movePawn(){
+        int startXCoordinate = Game.insertCoordinates()[0];
+        int startYCoordinate = Game.insertCoordinates()[1];
+
+        int endXCoordinate = Game.insertCoordinates()[0];
+        int endYCoordinate = Game.insertCoordinates()[1];
+
+//        Pawn pawn = new Pawn();
+
+//        (startXCoordinate, startYCoordinate);
 
 
 
+
+        String pawn  = board[startXCoordinate][startYCoordinate].toString();
+        System.out.println(pawn);
+
+
+    }
 
 
 }
