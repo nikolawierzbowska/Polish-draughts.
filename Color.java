@@ -6,4 +6,5 @@ public enum Color {
     Color(String symbol) {
         this.symbol = symbol;
     }
+
 }

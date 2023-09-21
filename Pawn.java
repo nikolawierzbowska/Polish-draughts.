@@ -19,11 +19,5 @@ public class Pawn {
 
 
 
-    public boolean validateMove(int x, int y) {
-        if (coordinates.getX()==x && coordinates.getY()==y) {
-            System.out.println("ok");
-            return true;
-        }
-        return false;
-    }
+
 }
