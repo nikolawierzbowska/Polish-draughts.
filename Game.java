@@ -17,15 +17,19 @@ public class Game {
         int player = 1;
         this.newboard = new Board();
 
-//        this.isGameContinue = true;
-//        while (isGameContinue) {
+        this.isGameContinue = true;
+        while (isGameContinue) {
 
         playRound();
 
-
+        if(player==1) {
+            System.out.println("WHITE PAWNS MOVE");
+        }else {
+            System.out.println("BLACK PAWNS MOVE");
+        }
         movePawn(newboard.getBoard());
-//            player = player == 1 ? 2 : 1;
-//        }
+            player = player == 1 ? 2 : 1;
+        }
 
     }
 
@@ -36,7 +40,7 @@ public class Game {
     }
 
     public static Scanner putCoordinates() {
-        System.out.println("Give coordinates: ex. 1A");
+        System.out.println("Give coordinates: (ex. 1A/1a)");
         Scanner scanner = new Scanner(System.in);
         return scanner;
     }
@@ -89,7 +93,7 @@ public class Game {
                 } else {
                     System.out.println(wrongCoordinatesMessage());
                 }
-            } else if (coordinates.length() == 3) {
+            } else  {
                 String xCord = coordinates.substring(0, 2);
                 yCoordinate = (int) coordinates.toUpperCase().charAt(2) - 65;
                 if (Integer.parseInt(xCord) <= sizeBoard && yCoordinate <= sizeBoard) {
@@ -139,7 +143,7 @@ public class Game {
     }
 
 
-    public int[] checkSecondCoordinatesToMovePawn() {
+    public int[] checkSecondCoordinatesToMovePawn(int x2, int y2) {
         int[] changedPawn;
         int endXCoordinate;
         int endYCoordinate;
@@ -150,7 +154,7 @@ public class Game {
             changedPawn = CoordinatesOfPawnChange();
             endXCoordinate = changedPawn[0];
             endYCoordinate = changedPawn[1];
-            resultSecondCoord = isSecondCoordinatesOfPawnIsCorrectToMovePawn(endXCoordinate, endYCoordinate);
+            resultSecondCoord = isSecondCoordinatesOfPawnIsCorrectToMovePawn(endXCoordinate, endYCoordinate, x2, y2);
 
         } while (!resultSecondCoord);
         System.out.println("drugi pionek ok");
@@ -253,37 +257,32 @@ public class Game {
 
     }
 
-    public boolean isEmptyPlaceToPutPawn(int x, int y) {
-        if (((y - 1) > 0 && (x + 1) < newboard.getBoard().length && newboard.getBoard()[x + 1][y - 1] != null) ||
-                ((y + 1) < newboard.getBoard().length && (x + 1) < newboard.getBoard().length
-                 && newboard.getBoard()[x + 1][y + 1] != null)) {
+    public boolean isEmptyPlaceToPutPawn(int x, int y, int x2, int y2) {
+        if (((y - 1) >= 0 && (x + 1) < newboard.getBoard().length && newboard.getBoard()[x + 1][y - 1] == newboard.getBoard()[x2][y2]) ||
+                ((y + 1) <= newboard.getBoard().length && (x + 1) <= newboard.getBoard().length
+                 && newboard.getBoard()[x + 1][y + 1] == newboard.getBoard()[x2][y2])) {
             return true;
         }
 
-        if (((y - 1) > 0 && (x - 1) >0 && newboard.getBoard()[x - 1][y - 1] != null) ||
-                ((y + 1) < newboard.getBoard().length && (x - 1) >0  &&
-                newboard.getBoard()[x - 1][y + 1] != null)) {
+        if (((y - 1) >= 0 && (x - 1) >=0 && newboard.getBoard()[x - 1][y - 1] == newboard.getBoard()[x2][y2]) ||
+                ((y + 1) <= newboard.getBoard().length && (x - 1) >=0  &&
+                newboard.getBoard()[x - 1][y + 1] == newboard.getBoard()[x2][y2])) {
             return true;
         }
+        System.out.println("jest false");
         return false;
     }
 
 
-    public boolean isSecondCoordinatesOfPawnIsCorrectToMovePawn(int x, int y) {
-        boolean isValidateMove = false;
-
-        while (!isValidateMove) {
-
-            if (newboard.getBoard()[x][y] == null &&  isEmptyPlaceToPutPawn(x,y) ) {
+    public boolean isSecondCoordinatesOfPawnIsCorrectToMovePawn(int x, int y, int x2, int y2) {
+            if (newboard.getBoard()[x][y] == null &&  isEmptyPlaceToPutPawn(x,y, x2, y2) ) {
                 System.out.println("ok wolne miejsce ");
                 return true;
-            } else if (newboard.getBoard()[x][y] != null) {
+            }else {
                 return false;
             }
 
 
-        }
-        return isValidateMove;
     }
 
 
@@ -295,11 +294,13 @@ public class Game {
 
     public void movePawn(Pawn[][] board) {
         int[] firstCoordinates = checkCoordinatesOfFirstPawn();
-        int[] secondCoordinates = checkSecondCoordinatesToMovePawn();
-        newboard.removePawn(board, firstCoordinates[0],firstCoordinates[1] );
+        int[] secondCoordinates = checkSecondCoordinatesToMovePawn(firstCoordinates[0], firstCoordinates[1]);
+        Color color = newboard.getBoard()[firstCoordinates[0]][firstCoordinates[1]].getColor();
+        newboard.removePawn(board, firstCoordinates[0],firstCoordinates[1]);
+        newboard.printNewPawn(board, secondCoordinates[0],secondCoordinates[1],color);
 //      jak wydrukowac ze zmienionym nowym pionkiem
+//        newboard.printBoard(board);
 //
-
     }
 
 

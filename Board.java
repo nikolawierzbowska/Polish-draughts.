@@ -159,6 +159,10 @@ public class Board {
 
     }
 
+    public void printNewPawn(Pawn[][] board, int x, int y, Color color){
+        board[x][y] = new Pawn(color,x,y);
+    }
+
 
 
 
