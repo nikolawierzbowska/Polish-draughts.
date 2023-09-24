@@ -3,7 +3,6 @@ import java.util.Scanner;
 
 
 public class Game {
-
     private Board newboard;
     private boolean isGameContinue;
 
@@ -12,16 +11,12 @@ public class Game {
         game.start();
     }
 
-
     public void start() {
         int player = 1;
         this.newboard = new Board();
-
         this.isGameContinue = true;
         while (isGameContinue) {
-
             playRound();
-
             if (player == 1) {
                 System.out.println("WHITE PAWNS MOVE");
             } else {
@@ -29,34 +24,29 @@ public class Game {
             }
             movePawn(newboard.getBoard());
             player = player == 1 ? 2 : 1;
-
-            System.out.println("\n\n\n\n\n\n\n");
         }
-
     }
 
-    public void playRound() {
+    private void playRound() {
         newboard.printBoard(newboard.getBoard());
-
+        checkWinner();
 
     }
 
-    public static Scanner putCoordinates() {
+    private Scanner putCoordinates() {
         System.out.println("Give coordinates: (ex. 1A/1a)");
-        Scanner scanner = new Scanner(System.in);
-        return scanner;
+        return new Scanner(System.in);
     }
 
-    public static String wrongCoordinatesMessage() {
+    private static final String WRONG_COORDINATES_MESSAGE() {
         return "Wrong input, try again";
     }
 
-
-    public static boolean letterOrDigitCoordinate(String coordinates, int a, int b) {
+    public boolean letterOrDigitCoordinate(String coordinates, int a, int b) {
         if (Character.isLetter(coordinates.charAt(a)) ||
                 (Character.isLetter(coordinates.charAt(b)) && Character.isLetter(coordinates.charAt(a)))
                 || (Character.isDigit(coordinates.charAt(a)) && Character.isDigit(coordinates.charAt(b)))) {
-            System.out.println(wrongCoordinatesMessage());
+            System.out.println(WRONG_COORDINATES_MESSAGE());
             return true;
         }
         return false;
@@ -74,7 +64,7 @@ public class Game {
             String coordinates = scanner.nextLine();
 
             if (coordinates.length() < 2 || coordinates.length() > 3) {
-                System.out.println(wrongCoordinatesMessage());
+                System.out.println(WRONG_COORDINATES_MESSAGE());
                 continue;
             }
 
@@ -90,10 +80,10 @@ public class Game {
                     if ((xCoordinate + yCoordinate) % 2 != 0) {
                         validCoordinates = true;
                     } else {
-                        System.out.println(wrongCoordinatesMessage());
+                        System.out.println(WRONG_COORDINATES_MESSAGE());
                     }
                 } else {
-                    System.out.println(wrongCoordinatesMessage());
+                    System.out.println(WRONG_COORDINATES_MESSAGE());
                 }
             } else {
                 String xCord = coordinates.substring(0, 2);
@@ -104,30 +94,29 @@ public class Game {
                     if ((xCoordinate + yCoordinate) % 2 != 0) {
                         validCoordinates = true;
                     } else {
-                        System.out.println(wrongCoordinatesMessage());
+                        System.out.println(WRONG_COORDINATES_MESSAGE());
                     }
                 } else {
-                    System.out.println(wrongCoordinatesMessage());
+                    System.out.println(WRONG_COORDINATES_MESSAGE());
                 }
             }
-
         }
         System.out.println(Arrays.toString(new int[]{xCoordinate, yCoordinate}));
         return new int[]{xCoordinate, yCoordinate};
     }
 
 
-    public int[] chosenCoordinatesOfPawn() {
+    private int[] chosenCoordinatesOfPawn() {
         return validateCoordinates();
     }
 
-    public int[] CoordinatesOfPawnChange() {
+    private int[] CoordinatesOfPawnChange() {
         return validateCoordinates();
 
     }
 
 
-    public int[] checkCoordinatesOfFirstPawn() {
+    private int[] checkCoordinatesOfFirstPawn() {
         int[] pointedPawn;
         int startXCoordinate;
         int startYCoordinate;
@@ -138,9 +127,7 @@ public class Game {
             startXCoordinate = pointedPawn[0];
             startYCoordinate = pointedPawn[1];
             result = isFirstCoordinatesOfPawnIsCorrectToMove(startXCoordinate, startYCoordinate);
-
         } while (!result);
-        System.out.println("pierwszy pionek ok");
         return new int[]{startXCoordinate, startYCoordinate};
     }
 
@@ -151,7 +138,6 @@ public class Game {
         int endYCoordinate;
         boolean resultSecondCoord;
 
-
         do {
             changedPawn = CoordinatesOfPawnChange();
             endXCoordinate = changedPawn[0];
@@ -159,163 +145,149 @@ public class Game {
             resultSecondCoord = isSecondCoordinatesOfPawnIsCorrectToMovePawn(endXCoordinate, endYCoordinate, x2, y2);
 
         } while (!resultSecondCoord);
-        System.out.println("drugi pionek ok");
         return new int[]{endXCoordinate, endYCoordinate};
-
     }
 
 
-    public boolean isEmptyPlaceToMove(int x, int y) {
-        if (newboard.getBoard()[x][y].getColor().equals(Color.BLACK)) {
+    public boolean isOutOfRangeSizeBoard1(int x, int y, int dx, int dy) {
+        return x - dx >= 0 && y - dy >= 0;
+    }
 
-            if ((x + 1 < newboard.getBoard().length) || (x - 1) > 0 || (y + 1) < newboard.getBoard().length || (y - 1) > 0) {
-                if ((y - 1 >= 0 && newboard.getBoard()[x + 1][y - 1] == null) || (y + 1 < newboard.getBoard().length && newboard.getBoard()[x + 1][y + 1] == null)) {
-                    System.out.println("black moze zrobic ruch o 1");
-                    return true;
-                }
+    public boolean isOutOfRangeSizeBoard2(int x, int y, int dx, int dy) {
+        return x + dx < newboard.getBoard().length && y - dy >= 0;
+    }
+
+    public boolean isOutOfRangeSizeBoard3(int x, int y, int dx, int dy) {
+        return x - dx >= 0 && y + dy < newboard.getBoard().length;
+    }
+
+    public boolean isOutOfRangeSizeBoard4(int x, int y, int dx, int dy) {
+        return x + dx < newboard.getBoard().length && y + dy < newboard.getBoard().length;
+    }
+
+    public boolean isEmptyPlaceToMove(int x, int y) {
+        int dx = 1;
+        int dy = 1;
+
+        if (newboard.getBoard()[x][y].getColor().equals(Color.BLACK)) {
+            if ((isOutOfRangeSizeBoard2(x, y, dx, dy) && newboard.getBoard()[x + dx][y - dy] == null) ||
+                    (isOutOfRangeSizeBoard4(x, y, dx, dy) && newboard.getBoard()[x + dx][y + dy] == null) ||
+                    (isOutOfRangeSizeBoard2(x, y, 2, 2) && newboard.getBoard()[x + 2][y - 2] == null) ||
+                    (isOutOfRangeSizeBoard4(x, y, 2, 2) && newboard.getBoard()[x + 2][y + 2] == null) ||
+                    (isOutOfRangeSizeBoard1(x, y, 2, dy) && newboard.getBoard()[x - 2][y - 2] == null) ||
+                    (isOutOfRangeSizeBoard4(x, y, 2, 2) && newboard.getBoard()[x - 2][y + 2] == null)) {
+                return true;
             }
         }
         if (newboard.getBoard()[x][y].getColor().equals(Color.WHITE)) {
-            if ((x - 1) > 0 || (y - 1) > 0 || (y + 1) < newboard.getBoard().length || (x + 1) < newboard.getBoard().length) {
-
-                if (((y - 1) > 0 && newboard.getBoard()[x - 1][y - 1] == null) || ((y + 1) < newboard.getBoard().length && newboard.getBoard()[x - 1][y + 1] == null)) {
-                    System.out.println("biały moze zrobic ruch o 1");
-                    return true;
-                }
+            if ((isOutOfRangeSizeBoard1(x, y, dx, dy) && newboard.getBoard()[x - dx][y - dy] == null) ||
+                    (isOutOfRangeSizeBoard3(x, y, dx, dy) && newboard.getBoard()[x - dx][y + dy] == null) ||
+                    (isOutOfRangeSizeBoard1(x, y, 2, 2) && newboard.getBoard()[x - 2][y - 2] == null) ||
+                    (isOutOfRangeSizeBoard3(x, y, 2, 2) && newboard.getBoard()[x - 2][y + 2] == null) ||
+                    (isOutOfRangeSizeBoard2(x, y, 2, 2) && newboard.getBoard()[x + 2][y - 2] == null) ||
+                    (isOutOfRangeSizeBoard4(x, y, 2, 2) && newboard.getBoard()[x + 2][y + 2] == null)) {
+                return true;
             }
         }
         return false;
-
     }
 
 
     public boolean isBlockedPlaceByTheSameColor(int x, int y) {
         if (newboard.getBoard()[x][y].getColor().equals(Color.BLACK)) {
-            if (((y - 1) > 0 && newboard.getBoard()[x + 1][y - 1] == null) || ((y + 1) < newboard.getBoard().length &&
-                    newboard.getBoard()[x + 1][y + 1] == null)) {
+            if ((isOutOfRangeSizeBoard2(x, y, 1, 1) && newboard.getBoard()[x + 1][y - 1] == null) ||
+                    (isOutOfRangeSizeBoard4(x, y, 1, 1) && newboard.getBoard()[x + 1][y + 1] == null)) {
                 return false;
-            } else if (((y - 1) > 0 && newboard.getBoard()[x + 1][y - 1].getColor().equals(Color.BLACK)) ||
-                    ((y + 1) < newboard.getBoard().length && newboard.getBoard()[x + 1][y + 1].getColor().equals(Color.BLACK))) {
-                System.out.println("przed black stoi black");
+            } else if ((isOutOfRangeSizeBoard2(x, y, 1, 1) && newboard.getBoard()[x + 1][y - 1].getColor().equals(Color.BLACK)) ||
+                    (isOutOfRangeSizeBoard4(x, y, 1, 1) && newboard.getBoard()[x + 1][y + 1].getColor().equals(Color.BLACK))) {
                 return true;
             }
         }
         if (newboard.getBoard()[x][y].getColor().equals(Color.WHITE)) {
-            if (((y - 1) > 0 && newboard.getBoard()[x - 1][y - 1] == null) || ((y + 1) < newboard.getBoard().length && newboard.getBoard()[x - 1][y + 1] == null)) {
+            if (((isOutOfRangeSizeBoard1(x, y, 1, 1) && newboard.getBoard()[x - 1][y - 1] == null) ||
+                    (isOutOfRangeSizeBoard3(x, y, 1, 1) && newboard.getBoard()[x - 1][y + 1] == null))) {
                 return false;
-            } else if (((y - 1) > 0 && newboard.getBoard()[x - 1][y - 1].getColor().equals(Color.WHITE)) ||
-                    ((y + 1) < newboard.getBoard().length && newboard.getBoard()[x - 1][y + 1].getColor().equals(Color.WHITE))) {
-                System.out.println("przed white stoi white");
-                return true;
-
+            } else if ((isOutOfRangeSizeBoard1(x, y, 1, 1) && newboard.getBoard()[x - 1][y - 1].getColor().equals(Color.WHITE)) ||
+                    (isOutOfRangeSizeBoard3(x, y, 1, 1) && newboard.getBoard()[x - 1][y + 1].getColor().equals(Color.WHITE))) {
             }
+
         }
         return false;
     }
 
 
     public boolean isPossibleToHitOnlyOne(int x, int y, int x2, int y2) {
-
         if (newboard.getBoard()[x][y] == null) {
             return false;
-
-
-        } else if( newboard.getBoard()[(x + x2) / 2][(y + y2) / 2] == null) {
+        } else if (newboard.getBoard()[(x + x2) / 2][(y + y2) / 2] == null) {
             return false;
-        }
-        else if (newboard.getBoard()[x][y].getColor().equals(Color.BLACK)) {
-            if (newboard.getBoard()[(x + x2) / 2][(y + y2) / 2].getColor().equals(Color.WHITE)) {
-                return true;
-            }
+        } else if (newboard.getBoard()[x][y].getColor().equals(Color.BLACK)) {
+            return newboard.getBoard()[(x + x2) / 2][(y + y2) / 2].getColor().equals(Color.WHITE);
         } else if (newboard.getBoard()[x][y].getColor().equals(Color.WHITE)) {
-            if (newboard.getBoard()[(x + x2) / 2][(y + y2) / 2].getColor().equals(Color.BLACK)) {
-                return true;
-            }
+            return newboard.getBoard()[(x + x2) / 2][(y + y2) / 2].getColor().equals(Color.BLACK);
         }
         return false;
     }
 
 
     public boolean isFirstCoordinatesOfPawnIsCorrectToMove(int x, int y) {
-        boolean isValidateMove = false;
-
-        while (!isValidateMove) {
-
-            if (newboard.getBoard()[x][y] != null) {
-                if (isBlockedPlaceByTheSameColor(x, y)) {
-                    return false;
-                } else if (isEmptyPlaceToMove(x, y)) {
-                    System.out.println("moze  ruch pojedynczy");
-                    isValidateMove = true;
-                }
-
-
-            }
-            if (newboard.getBoard()[x][y] == null) {
-                System.out.println("This place is invalid, try again");
-                break;
+        if (newboard.getBoard()[x][y] != null) {
+            if (isBlockedPlaceByTheSameColor(x, y)) {
+                System.out.println(WRONG_COORDINATES_MESSAGE());
+                return false;
+            } else if (isEmptyPlaceToMove(x, y)) {
+                return true;
             }
 
         }
-        return isValidateMove;
-
+        System.out.println(WRONG_COORDINATES_MESSAGE());
+        return false;
     }
 
     public boolean isFirstCoordinatesOfPawnIsCorrectToHit(int x, int y, int x2, int y2) {
         if (newboard.getBoard()[x][y] != null) {
             if (isPossibleToHitOnlyOne(x, y, x2, y2)) {
-                System.out.println("może zbić");
                 return true;
-
             }
         }
         return false;
     }
 
+        public boolean isEmptyPlaceToPutPawn(int x, int y, int x2, int y2) {
+        if (newboard.getBoard()[x][y] == null && newboard.getBoard()[x2][y2].getColor().equals(Color.BLACK)) {
+            if (((isOutOfRangeSizeBoard3(x, y, 1, 1) && newboard.getBoard()[x - 1][y + 1] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard1(x, y, 1, 1) && newboard.getBoard()[x - 1][y - 1] == newboard.getBoard()[x2][y2])) ||
+                    (isOutOfRangeSizeBoard3(x, y, 2, 2) && newboard.getBoard()[x - 2][y + 2] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard1(x, y, 2, 2) && newboard.getBoard()[x - 2][y - 2] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard4(x, y, 2, 2) && newboard.getBoard()[x + 2][y + 2] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard2(x, y, 2, 2) && newboard.getBoard()[x + 2][y - 2] == newboard.getBoard()[x2][y2])) {
+                return true;
 
-    public boolean isEmptyPlaceToPutPawn(int x, int y, int x2, int y2) {
-        if ((((y - 1) >= 0 && (x + 1) < newboard.getBoard().length && newboard.getBoard()[x + 1][y - 1] == newboard.getBoard()[x2][y2]) ||
-                ((y + 1) < newboard.getBoard().length && (x + 1) < newboard.getBoard().length
-                        && newboard.getBoard()[x + 1][y + 1] == newboard.getBoard()[x2][y2])) ||
-                (((y - 2) >= 0 && (x + 2) < newboard.getBoard().length && newboard.getBoard()[x + 2][y - 2] == newboard.getBoard()[x2][y2]) ||
-                        ((y + 2) < newboard.getBoard().length && (x + 2) < newboard.getBoard().length
-                                && newboard.getBoard()[x + 2][y + 2] == newboard.getBoard()[x2][y2]))) {
-            return true;
+            }
+        } else if (newboard.getBoard()[x][y] == null && newboard.getBoard()[x2][y2].getColor().equals(Color.WHITE)) {
+            if ((isOutOfRangeSizeBoard2(x, y, 1, 1) && newboard.getBoard()[x + 1][y - 1] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard4(x, y, 1, 1) && newboard.getBoard()[x + 1][y + 1] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard2(x, y, 2, 2) && newboard.getBoard()[x + 2][y - 2] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard4(x, y, 2, 2) && newboard.getBoard()[x + 2][y + 2] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard1(x, y, 2, 2) && newboard.getBoard()[x - 2][y - 2] == newboard.getBoard()[x2][y2]) ||
+                    (isOutOfRangeSizeBoard3(x, y, 2, 2) && newboard.getBoard()[x - 2][y + 2] == newboard.getBoard()[x2][y2])
+            ) {
+                return true;
+            }
         }
-
-        if ((((y - 1) >= 0 && (x - 1) >= 0 && newboard.getBoard()[x - 1][y - 1] == newboard.getBoard()[x2][y2]) ||
-                ((y + 1) < newboard.getBoard().length && (x - 1) > 0 &&
-                        newboard.getBoard()[x - 1][y + 1] == newboard.getBoard()[x2][y2])) ||
-                (((y - 2) >= 0 && (x - 2) >= 0 && newboard.getBoard()[x - 2][y - 2] == newboard.getBoard()[x2][y2]) ||
-                        ((y + 2) < newboard.getBoard().length && (x - 2) > 0 &&
-                                newboard.getBoard()[x - 2][y + 2] == newboard.getBoard()[x2][y2]))
-
-
-        ) {
-            return true;
-        }
-        System.out.println("jest false");
         return false;
     }
 
 
     public boolean isSecondCoordinatesOfPawnIsCorrectToMovePawn(int x, int y, int x2, int y2) {
         if (newboard.getBoard()[x][y] == null && isEmptyPlaceToPutPawn(x, y, x2, y2)) {
-            System.out.println("ok wolne miejsce ");
             return true;
         } else {
+            System.out.println(WRONG_COORDINATES_MESSAGE());
             return false;
         }
 
-
     }
-
-
-//    public void checkForWinner() {
-//        Point source = new Point(1,2);
-//        Point source1 = new Point(1,2);
-//    }
-
 
     public void movePawn(Pawn[][] board) {
         int[] firstCoordinates = checkCoordinatesOfFirstPawn();
@@ -327,12 +299,44 @@ public class Game {
             newboard.removePawn(board, ((firstCoordinates[0] + secondCoordinates[0]) / 2), (firstCoordinates[1] + secondCoordinates[1]) / 2);
             newboard.printNewPawn(board, secondCoordinates[0], secondCoordinates[1], color);
 
-        } else  {
+        } else {
             newboard.removePawn(board, firstCoordinates[0], firstCoordinates[1]);
             newboard.printNewPawn(board, secondCoordinates[0], secondCoordinates[1], color);
         }
 
     }
 
+    public String checkAmountPawns() {
+        int whitePawns = 0;
+        int blackPawns = 0;
+        for (int i = 0; i < newboard.getBoard().length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (newboard.getBoard()[i][j] != null) {
+                    if (newboard.getBoard()[i][j].getColor().equals(Color.WHITE)) {
+                        whitePawns += 1;
+                    } else if (newboard.getBoard()[i][j].getColor().equals(Color.BLACK)) {
+                        blackPawns += 1;
+                    }
+                }
+            }
+        }
+        if (blackPawns == 0) {
+            return "white";
+        } else if (whitePawns == 0) {
+            return "black";
+        } else {
+            return "neither";
+        }
+    }
+
+    public String checkWinner() {
+        String result = checkAmountPawns();
+        if (result.equals("WHITE")) {
+            return "Black won";
+        } else if (result.equals("BLACK")) {
+            return "White won";
+        }
+        return "No winner yet";
+    }
 
 }
